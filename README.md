@@ -31,4 +31,5 @@ pip install -q `
 
 > _Note_: the `pip` command above is with Powershell syntax.
 
-
+> _Note 2:_ Marked the windows dependency in `requiments.txt`<br>
+> `pywin32==307; platform_system=="Windows"`
