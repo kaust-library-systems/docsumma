@@ -149,15 +149,22 @@ def setup_qa_chain(
     return qa_chain
 
 
-def ask_question(qa_chain, question: str):
+def ask_question_ipython(qa_chain, question: str):
     """Ask a question and display the answer"""
     result = qa_chain.invoke({"question": question})
     display(Markdown(f"**Question:** {question}\n\n**Answer:** {result['answer']}"))
 
 
+def ask_question(qa_chain, question: str):
+    """Ask a question and display the answer"""
+    result = qa_chain.invoke({"question": question})
+    # display(Markdown(f"**Question:** {question}\n\n**Answer:** {result['answer']}"))
+    print(f"Question: {question}\nAnswer: {result['answer']}\n\n")
+
+
 def main():
-    doc_path = Path(
-        "best_practices_for_scientific_computing.pdf"
+    doc_path = Path("data").joinpath(
+        "british_library_cyber-attack_lessons_learned.pdf"
     )  # Replace with your document path
 
     # Check format and process
