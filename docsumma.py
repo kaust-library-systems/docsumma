@@ -117,8 +117,12 @@ def setup_qa_chain(
 ):
     """Set up the QA chain for document processing"""
     # Load and split the document
-    loader = UnstructuredMarkdownLoader(str(markdown_path))
-    documents = loader.load()
+    try:
+        loader = UnstructuredMarkdownLoader(str(markdown_path))
+        documents = loader.load()
+    except TypeError as tt:
+        print(f"Error loading documents: {tt}")
+        return None
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500, chunk_overlap=50, length_function=len
@@ -159,31 +163,38 @@ def ask_question(qa_chain, question: str):
     """Ask a question and display the answer"""
     result = qa_chain.invoke({"question": question})
     # display(Markdown(f"**Question:** {question}\n\n**Answer:** {result['answer']}"))
-    print(f"Question: {question}\nAnswer: {result['answer']}\n\n")
+    # print(f"Question: {question}\nAnswer: {result['answer']}\n\n")
+    return result
 
 
 def main():
-    doc_path = Path("data").joinpath(
-        "british_library_cyber-attack_lessons_learned.pdf"
-    )  # Replace with your document path
 
-    # Check format and process
-    doc_format = get_document_format(doc_path)
-    if doc_format:
-        md_path = convert_document_to_markdown(doc_path)
-        qa_chain = setup_qa_chain(md_path)
+    files = os.listdir("data")
 
-        # Example questions
-        questions = [
-            "What is the main topic of this document?",
-            "What are the key points discussed?",
-            "Can you summarize the conclusions?",
-        ]
+    for file in files:
+        doc_path = Path("data").joinpath(file)  # Replace with your document path
 
-        for question in questions:
-            ask_question(qa_chain, question)
-    else:
-        print(f"Unsupported document format: {doc_path.suffix}")
+        # Check format and process
+        doc_format = get_document_format(doc_path)
+        if doc_format:
+            md_path = convert_document_to_markdown(doc_path)
+            qa_chain = setup_qa_chain(md_path)
+
+            # Example questions
+            questions = [
+                "What is the main topic of this document?",
+                "What are the key points discussed?",
+                "Can you summarize the conclusions?",
+            ]
+
+            # doc_answer = Path("data").joinpath(f"answer_{file}")
+            # with open(doc_answer, "a") as ff:
+            #     for question in questions:
+            #         result = ask_question(qa_chain, question)
+            #         ff.write(question + "\n")
+            #         ff.write(result["answer"])
+        else:
+            print(f"Unsupported document format: {doc_path.suffix}")
 
 
 if __name__ == "__main__":
