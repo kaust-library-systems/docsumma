@@ -65,7 +65,7 @@ def convert_document_to_markdown(doc_path) -> str:
 
             # Configure pipeline options
             pipeline_options = PdfPipelineOptions()
-            pipeline_options.do_ocr = False  # Disable OCR temporarily
+            pipeline_options.do_ocr = True  # Disable OCR temporarily
             pipeline_options.do_table_structure = True
 
             # Create converter with minimal options
@@ -128,10 +128,14 @@ def setup_qa_chain(
         chunk_size=500, chunk_overlap=50, length_function=len
     )
     texts = text_splitter.split_documents(documents)
+    if len(texts) == 0:
+        raise ValueError("Failed splitting the document. No text.")
+
     # texts= documents
 
     # Create embeddings and vector store
     embeddings = OllamaEmbeddings(model=embeddings_model_name)
+
     vectorstore = FAISS.from_documents(texts, embeddings)
 
     # Initialize LLM
@@ -142,13 +146,17 @@ def setup_qa_chain(
         memory_key="chat_history", output_key="answer", return_messages=True
     )
 
-    # Create the chain
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        retriever=vectorstore.as_retriever(search_kwargs={"k": 10}),
-        memory=memory,
-        return_source_documents=True,
-    )
+    qa_chain = None
+
+    if vectorstore != None:
+
+        # Create the chain
+        qa_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=vectorstore.as_retriever(search_kwargs={"k": 10}),
+            memory=memory,
+            return_source_documents=True,
+        )
 
     return qa_chain
 
@@ -178,7 +186,11 @@ def main():
         doc_format = get_document_format(doc_path)
         if doc_format:
             md_path = convert_document_to_markdown(doc_path)
+
             qa_chain = setup_qa_chain(md_path)
+
+            if qa_chain == None:
+                next
 
             # Example questions
             questions = [
