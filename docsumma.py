@@ -190,7 +190,8 @@ def main():
             qa_chain = setup_qa_chain(md_path)
 
             if qa_chain == None:
-                next
+                print("Qa_chain is null")
+                continue
 
             # Example questions
             questions = [
@@ -199,12 +200,13 @@ def main():
                 "Can you summarize the conclusions?",
             ]
 
-            # doc_answer = Path("data").joinpath(f"answer_{file}")
-            # with open(doc_answer, "a") as ff:
-            #     for question in questions:
-            #         result = ask_question(qa_chain, question)
-            #         ff.write(question + "\n")
-            #         ff.write(result["answer"])
+            answer_file = f"{Path(file).stem}_awswer.txt"
+            doc_answer = Path("data").joinpath(answer_file)
+            with open(doc_answer, "a") as ff:
+                for question in questions:
+                    result = ask_question(qa_chain, question)
+                    ff.write(question + "\n")
+                    ff.write(result["answer"])
         else:
             print(f"Unsupported document format: {doc_path.suffix}")
 
