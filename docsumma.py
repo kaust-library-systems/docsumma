@@ -65,7 +65,7 @@ def convert_document_to_markdown(doc_path) -> str:
 
             # Configure pipeline options
             pipeline_options = PdfPipelineOptions()
-            pipeline_options.do_ocr = True  # Disable OCR temporarily
+            pipeline_options.do_ocr = False  # Disable OCR temporarily
             pipeline_options.do_table_structure = True
 
             # Create converter with minimal options
@@ -200,7 +200,7 @@ def main():
                 "Can you summarize the conclusions?",
             ]
 
-            answer_file = f"{Path(file).stem}_awswer.txt"
+            answer_file = f"{Path(file).stem}_answer.txt"
             doc_answer = Path("data").joinpath(answer_file)
             with open(doc_answer, "a") as ff:
                 for question in questions:
