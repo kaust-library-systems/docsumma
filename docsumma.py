@@ -207,6 +207,7 @@ def main():
                     result = ask_question(qa_chain, question)
                     ff.write(question + "\n")
                     ff.write(result["answer"])
+                    ff.write("\n\n")
         else:
             print(f"Unsupported document format: {doc_path.suffix}")
 
