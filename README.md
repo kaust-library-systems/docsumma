@@ -5,8 +5,8 @@ Document summarization
 
 ## TODO
 
-- [ ] Directories for Markdown and the text with answered questions
 - [ ] Test different models.
+- [ ] Directories for Markdown and the text with answered questions
 - [ ] Create a log file.
 - [ ] Log the files that failed in the process.
 
@@ -42,3 +42,11 @@ pip install -q `
 
 > _Note 2:_ Marked the windows dependency in `requiments.txt`<br>
 > `pywin32==307; platform_system=="Windows"`
+
+## Models
+
+Testing different models to compare the summarization of them:
+
+* [granite3.1-dense:8b](https://ollama.com/library/granite3.1-dense) (IBM)
+* [Phi4 (14b)](https://ollama.com/library/phi4) (Microsoft)
+* [llama3.2-vision (11b)](https://ollama.com/library/llama3.2-vision) (Meta)
