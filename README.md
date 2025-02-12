@@ -2,6 +2,15 @@
 
 Document summarization
 
+
+## TODO
+
+- [ ] Directories for Markdown and the text with answered questions
+- [ ] Test different models.
+- [ ] Create a log file.
+- [ ] Log the files that failed in the process.
+
+
 ## Dependencies
 
 Installing dependencies for Ollama and Python packages
