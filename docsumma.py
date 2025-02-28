@@ -31,6 +31,7 @@ if os.name == "nt":
     os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
+# Document format detection.
 def get_document_format(file_path) -> InputFormat:
     """Determine the document format based on file extension"""
     try:
@@ -50,6 +51,7 @@ def get_document_format(file_path) -> InputFormat:
         return "Error in get_document_format: {str(e)}"
 
 
+# Document conversion
 def convert_document_to_markdown(doc_path) -> str:
     """Convert document to markdown using simplified pipeline"""
     try:
@@ -110,6 +112,11 @@ def convert_document_to_markdown(doc_path) -> str:
         return f"Error converting document: {doc_path}"
 
 
+# QA Setup setup:
+# - Document loading,
+# - Text splitting,
+# - Vector store,
+# - Language model
 def setup_qa_chain(
     markdown_path: Path,
     embeddings_model_name: str = "nomic-embed-text:latest",
@@ -161,12 +168,14 @@ def setup_qa_chain(
     return qa_chain
 
 
+# Set up question answering interface
 def ask_question_ipython(qa_chain, question: str):
     """Ask a question and display the answer"""
     result = qa_chain.invoke({"question": question})
     display(Markdown(f"**Question:** {question}\n\n**Answer:** {result['answer']}"))
 
 
+# Perform the question anserwing
 def ask_question(qa_chain, question: str):
     """Ask a question and display the answer"""
     result = qa_chain.invoke({"question": question})
