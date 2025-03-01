@@ -2,7 +2,7 @@ import os
 import tempfile
 import shutil
 from pathlib import Path
-from IPython.display import Markdown, display
+# from IPython.display import Markdown, display
 
 # Docling imports
 from docling.datamodel.base_models import InputFormat
