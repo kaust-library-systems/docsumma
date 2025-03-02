@@ -2,6 +2,7 @@ import os
 import tempfile
 import shutil
 from pathlib import Path
+from configparser import ConfigParser
 
 # from IPython.display import Markdown, display
 
@@ -53,7 +54,7 @@ def get_document_format(file_path) -> InputFormat:
 
 
 # Document conversion
-def convert_document_to_markdown(doc_path) -> str:
+def convert_document_to_markdown(doc_path, md_dir) -> str:
     """Convert document to markdown using simplified pipeline"""
     try:
         # Convert to absolute path string
@@ -99,7 +100,8 @@ def convert_document_to_markdown(doc_path) -> str:
             md = conv_result.document.export_to_markdown()
 
             # Create output path
-            output_dir = os.path.dirname(input_path)
+            # output_dir = os.path.dirname(input_path)
+            output_dir = md_dir
             base_name = os.path.splitext(os.path.basename(input_path))[0]
             md_path = os.path.join(output_dir, f"{base_name}_converted.md")
 
@@ -124,6 +126,9 @@ def setup_qa_chain(
     model_name: str = "granite3.1-dense:8b",
 ):
     """Set up the QA chain for document processing"""
+
+    print(f"Using model: '{model_name}'")
+
     # Load and split the document
     try:
         loader = UnstructuredMarkdownLoader(str(markdown_path))
@@ -187,17 +192,25 @@ def ask_question(qa_chain, question: str):
 
 def main():
 
-    files = os.listdir("data")
+    config = ConfigParser()
+    config.read("config.cfg")
+
+    input_dir = config["FILES"]["input_dir"]
+    output_dir = config["FILES"]["output_dir"]
+    md_dir = config["FILES"]["md_dir"]
+    model_name = config["MODEL"]["model"]
+
+    files = os.listdir(input_dir)
 
     for file in files:
-        doc_path = Path("data").joinpath(file)  # Replace with your document path
+        doc_path = Path(input_dir).joinpath(file)  # Replace with your document path
 
         # Check format and process
         doc_format = get_document_format(doc_path)
         if doc_format:
-            md_path = convert_document_to_markdown(doc_path)
+            md_path = convert_document_to_markdown(doc_path, md_dir)
 
-            qa_chain = setup_qa_chain(md_path)
+            qa_chain = setup_qa_chain(md_path, model_name)
 
             if qa_chain == None:
                 print("Qa_chain is null")
@@ -211,7 +224,7 @@ def main():
             ]
 
             answer_file = f"{Path(file).stem}_answer.txt"
-            doc_answer = Path("data").joinpath(answer_file)
+            doc_answer = Path(output_dir).joinpath(answer_file)
             with open(doc_answer, "a") as ff:
                 for question in questions:
                     result = ask_question(qa_chain, question)
