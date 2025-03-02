@@ -2,6 +2,7 @@ import os
 import tempfile
 import shutil
 from pathlib import Path
+
 # from IPython.display import Markdown, display
 
 # Docling imports
@@ -172,7 +173,7 @@ def setup_qa_chain(
 def ask_question_ipython(qa_chain, question: str):
     """Ask a question and display the answer"""
     result = qa_chain.invoke({"question": question})
-    display(Markdown(f"**Question:** {question}\n\n**Answer:** {result['answer']}"))
+    print(f"**Question:** {question}\n\n**Answer:** {result['answer']}")
 
 
 # Perform the question anserwing
