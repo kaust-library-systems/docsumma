@@ -43,6 +43,18 @@ pip install -q `
 > _Note 2:_ Marked the windows dependency in `requiments.txt`<br>
 > `pywin32==307; platform_system=="Windows"`
 
+## Libraries
+
+Maybe it's necessary to [match the CUDA library with the other libraries](https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/) - specially PyTorch by setting an environment variable
+
+```
+(docsumma) mgarcia@ilmen:~/Work/docsumma$ echo $TORCH_CUDA_ARCH_LIST
+7.0 7.5 8.0 8.9
+(docsumma) mgarcia@ilmen:~/Work/docsumma$
+```
+
+I also removed the library `ninja` from the dependencies and system.
+
 ## Models
 
 Testing different models to compare the summarization of them:
