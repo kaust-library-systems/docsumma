@@ -210,7 +210,7 @@ def main():
         if doc_format:
             md_path = convert_document_to_markdown(doc_path, md_dir)
 
-            qa_chain = setup_qa_chain(md_path, model_name)
+            qa_chain = setup_qa_chain(md_path, model_name=model_name)
 
             if qa_chain == None:
                 print("Qa_chain is null")
