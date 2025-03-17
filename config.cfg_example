@@ -1,0 +1,8 @@
+[FILES]
+input_dir = data/in
+output_dir = data/out
+md_dir = data/md
+
+[MODEL]
+# Get the list available models with the command "ollama list"
+model = granite3.1-dense:8b

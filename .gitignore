@@ -1,5 +1,6 @@
 # Docsumma
 data/*
+config.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
