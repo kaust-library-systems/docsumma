@@ -92,6 +92,14 @@ def convert_document_to_markdown(doc_path, md_dir) -> str:
             print("Starting conversion...")
             conv_result = converter.convert(temp_input)
 
+            print("mg. Conversion finished.")
+            print(f"mg. Type Conversion result: {type(conv_result.pages)}")
+            print(f"mg. Len Conversion result: {len(conv_result.pages)}")
+            print(f"mg. Conversion result page: {conv_result.pages}")
+
+
+            print(f"mg. Type Conversion result element: {type(conv_result.pages[0])}")
+
             if not conv_result or not conv_result.document:
                 raise ValueError(f"Failed to convert document: {doc_path}")
 
@@ -217,10 +225,14 @@ def main():
                 continue
 
             # Example questions
+            # questions = [
+            #     "What is the main topic of this document?",
+            #     "What are the key points discussed?",
+            #     "Can you summarize the conclusions?",
+            # ]
+
             questions = [
-                "What is the main topic of this document?",
-                "What are the key points discussed?",
-                "Can you summarize the conclusions?",
+                "Can you summarize the document?",
             ]
 
             answer_file = f"{Path(file).stem}_answer.txt"
