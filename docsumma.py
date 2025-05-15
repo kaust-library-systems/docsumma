@@ -16,7 +16,7 @@ from docling.document_converter import (
     DocumentConverter,
     PdfFormatOption,
     WordFormatOption,
-    SimplePipeline,
+    SimplePipeline, # type: ignore
 )
 
 # LangChain imports
@@ -48,9 +48,9 @@ def get_document_format(file_path) -> InputFormat:
             ".html": InputFormat.HTML,
             ".htm": InputFormat.HTML,
         }
-        return format_map.get(extension, None)
+        return format_map.get(extension, None) # type: ignore
     except:
-        return "Error in get_document_format: {str(e)}"
+        return "Error in get_document_format: {str(e)}" # type: ignore
 
 
 # Document conversion
@@ -92,13 +92,11 @@ def convert_document_to_markdown(doc_path, md_dir) -> str:
             print("Starting conversion...")
             conv_result = converter.convert(temp_input)
 
-            print("mg. Conversion finished.")
-            print(f"mg. Type Conversion result: {type(conv_result.pages)}")
-            print(f"mg. Len Conversion result: {len(conv_result.pages)}")
-            print(f"mg. Conversion result page: {conv_result.pages}")
-
-
-            print(f"mg. Type Conversion result element: {type(conv_result.pages[0])}")
+            if len(conv_result.pages[0].cells) == 0:
+                print("mg. No cells in the document")
+                return f"Error: No cells in the document"
+            else:
+                print("mg. Cells in the document: ", len(conv_result.pages[0].cells))
 
             if not conv_result or not conv_result.document:
                 raise ValueError(f"Failed to convert document: {doc_path}")
@@ -218,7 +216,7 @@ def main():
         if doc_format:
             md_path = convert_document_to_markdown(doc_path, md_dir)
 
-            qa_chain = setup_qa_chain(md_path, model_name=model_name)
+            qa_chain = setup_qa_chain(Path(md_path), model_name=model_name)
 
             if qa_chain == None:
                 print("Qa_chain is null")
