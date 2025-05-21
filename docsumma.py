@@ -54,71 +54,66 @@ def get_document_format(file_path) -> InputFormat:
 
 
 # Document conversion
-def convert_document_to_markdown(doc_path, md_dir) -> str:
-    """Convert document to markdown using simplified pipeline"""
-    try:
-        # Convert to absolute path string
-        input_path = os.path.abspath(str(doc_path))
-        print(f"Converting document: {doc_path}")
+def convert_document_to_markdown(doc_path, md_dir, do_ocr=False) -> str:
+    """Convert document to markdown using simplified pipeline. By default, OCR is disabled."""
+    # Convert to absolute path string
+    input_path = os.path.abspath(str(doc_path))
+    print(f"Converting document: {doc_path}")
 
-        # Create temporary directory for processing
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Copy input file to temp directory
-            temp_input = os.path.join(temp_dir, os.path.basename(input_path))
-            shutil.copy2(input_path, temp_input)
+    # Create temporary directory for processing
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Copy input file to temp directory
+        temp_input = os.path.join(temp_dir, os.path.basename(input_path))
+        shutil.copy2(input_path, temp_input)
 
-            # Configure pipeline options
-            pipeline_options = PdfPipelineOptions()
-            pipeline_options.do_ocr = False  # Disable OCR temporarily
-            pipeline_options.do_table_structure = True
+        # Configure pipeline options
+        pipeline_options = PdfPipelineOptions()
+        pipeline_options.do_ocr = do_ocr
+        pipeline_options.do_table_structure = True
 
-            # Create converter with minimal options
-            converter = DocumentConverter(
-                allowed_formats=[
-                    InputFormat.PDF,
-                    InputFormat.DOCX,
-                    InputFormat.HTML,
-                    InputFormat.PPTX,
-                ],
-                format_options={
-                    InputFormat.PDF: PdfFormatOption(
-                        pipeline_options=pipeline_options,
-                    ),
-                    InputFormat.DOCX: WordFormatOption(pipeline_cls=SimplePipeline),
-                },
-            )
+        # Create converter with minimal options
+        converter = DocumentConverter(
+            allowed_formats=[
+                InputFormat.PDF,
+                InputFormat.DOCX,
+                InputFormat.HTML,
+                InputFormat.PPTX,
+            ],
+            format_options={
+                InputFormat.PDF: PdfFormatOption(
+                    pipeline_options=pipeline_options,
+                ),
+                InputFormat.DOCX: WordFormatOption(pipeline_cls=SimplePipeline),
+            },
+        )
 
-            # Convert document
-            print("Starting conversion...")
-            conv_result = converter.convert(temp_input)
+        # Convert document
+        print("Starting conversion...")
+        conv_result = converter.convert(temp_input)
+        if len(conv_result.pages[0].cells) == 0:
+            raise ValueError(f"Failed to convert document to markdown '{temp_input}'.")
+        else:
+            # TODO: once we understand better the document conversioin, we can...
+            # remove the message with the number of cells.
+            print("mg. Cells in the document: ", len(conv_result.pages[0].cells))
 
-            if len(conv_result.pages[0].cells) == 0:
-                print("mg. No cells in the document")
-                return f"Error: No cells in the document"
-            else:
-                print("mg. Cells in the document: ", len(conv_result.pages[0].cells))
 
-            if not conv_result or not conv_result.document:
-                raise ValueError(f"Failed to convert document: {doc_path}")
+        # Export to markdown
+        print("Exporting to markdown...")
+        md = conv_result.document.export_to_markdown()
 
-            # Export to markdown
-            print("Exporting to markdown...")
-            md = conv_result.document.export_to_markdown()
+        # Create output path
+        # output_dir = os.path.dirname(input_path)
+        output_dir = md_dir
+        base_name = os.path.splitext(os.path.basename(input_path))[0]
+        md_path = os.path.join(output_dir, f"{base_name}_converted.md")
 
-            # Create output path
-            # output_dir = os.path.dirname(input_path)
-            output_dir = md_dir
-            base_name = os.path.splitext(os.path.basename(input_path))[0]
-            md_path = os.path.join(output_dir, f"{base_name}_converted.md")
+        # Write markdown file
+        print(f"Writing markdown to: {base_name}_converted.md")
+        with open(md_path, "w", encoding="utf-8") as fp:
+            fp.write(md)
 
-            # Write markdown file
-            print(f"Writing markdown to: {base_name}_converted.md")
-            with open(md_path, "w", encoding="utf-8") as fp:
-                fp.write(md)
-
-            return md_path
-    except:
-        return f"Error converting document: {doc_path}"
+        return md_path
 
 
 # QA Setup setup:
@@ -214,8 +209,11 @@ def main():
         # Check format and process
         doc_format = get_document_format(doc_path)
         if doc_format:
-            md_path = convert_document_to_markdown(doc_path, md_dir)
-
+            try:
+                md_path = convert_document_to_markdown(doc_path, md_dir)
+            except ValueError as ve:
+                print("Document conversion failed. Enabling OCR.")
+                md_path = convert_document_to_markdown(doc_path, md_dir, do_ocr=True)
             qa_chain = setup_qa_chain(Path(md_path), model_name=model_name)
 
             if qa_chain == None:
