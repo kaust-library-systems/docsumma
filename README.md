@@ -2,58 +2,49 @@
 
 Document summarization
 
+## Configuration File
 
-## TODO
+Rename the configuration file `config.cfg_example` to `config.cfg` and set the parameters with location of the files.
 
-- [X] Test different models.
-- [X] Directories for Markdown and the text with answered questions
-- [ ] Create a log file.
-- [ ] Log the files that failed in the process.
+```
+[FILES]
+input_dir = data/in
+output_dir = data/out
+md_dir = data/md
+```
 
+It's strongly recommended to keep the default model to `granite3.1-dense:8b` (IBM) for the summarization.
 
 ## Dependencies
 
-Installing dependencies for Ollama and Python packages
+Install [Ollama](https://ollama.com/download) for your platform like Windows or Linux.
 
 
-```
-ollama pull granite3.1-dense:8b
-ollama pull nomic-embed-text
-```
+Activate the environment and install the dependencies. Be patient, it takes a while to install all the dependencies.
 
 ```
-pip install -q `
-"langchain>=0.1.0" `
-"langchain-community>=0.0.13" `
-"langchain-core>=0.1.17" `
-"langchain-ollama>=0.0.1" `
-"pdfminer.six>=20221105" `
-"markdown>=3.5.2" `
-"docling>=2.0.0" `
-"beautifulsoup4>=4.12.0" `
-"unstructured>=0.12.0" `
-"chromadb>=0.4.22" `
-"faiss-cpu>=1.7.4" `
-"requests>=2.32.0" `
-"IPython"
+(venv) PS C:\Users\marce\Work\docsumma> cat .\requiments.txt
+langchain>=0.1.0
+langchain-community>=0.0.13
+langchain-core>=0.1.17
+langchain-ollama>=0.0.1
+pdfminer.six>=20221105
+markdown>=3.5.2
+docling>=2.0.0
+beautifulsoup4>=4.12.0
+unstructured>=0.12.0
+chromadb>=0.4.22
+faiss-cpu>=1.7.4
+(venv) PS C:\Users\marce\Work\docsumma>
 ```
 
-> _Note_: the `pip` command above is with Powershell syntax.
+### Developer Mode
 
-> _Note 2:_ Marked the windows dependency in `requiments.txt`<br>
-> `pywin32==307; platform_system=="Windows"`
-
-## Libraries
-
-Maybe it's necessary to [match the CUDA library with the other libraries](https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/) - specially PyTorch by setting an environment variable
+On Windows is necessary to habilitate the developer mode.
 
 ```
-(docsumma) mgarcia@ilmen:~/Work/docsumma$ echo $TORCH_CUDA_ARCH_LIST
-7.0 7.5 8.0 8.9
-(docsumma) mgarcia@ilmen:~/Work/docsumma$
+System -> For developers -> Developer mode
 ```
-
-I also removed the library `ninja` from the dependencies and system.
 
 ## Models
 
