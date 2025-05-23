@@ -13,7 +13,9 @@ output_dir = data/out
 md_dir = data/md
 ```
 
-It's strongly recommended to keep the default model to `granite3.1-dense:8b` (IBM) for the summarization.
+We will use  `granite3.1-dense:8b` (IBM) for the summarization because it's a good balance between performance and hardware requirements. 
+
+```
 
 ## Dependencies
 
