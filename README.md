@@ -88,7 +88,4 @@ Testing different models to compare the summarization of them:
 
 * [granite3.1-dense:8b](https://ollama.com/library/granite3.1-dense) (IBM)
 * [Phi4 (14b)](https://ollama.com/library/phi4) (Microsoft)
-* [llama3.2-vision (11b)](https://ollama.com/library/llama3.2-vision) (Meta)
-
-
-
+* [gemma3:4b](https://ollama.com/library/gemma3:4b) (Google)
