@@ -23,7 +23,7 @@ On Windows, install Python 3.11
 PS C:\Users\marce\Work\docsumma> winget install Python.Python.3.11
 ```
 
-> Note: The software stack is very senstive to the versioning of the libraries. One should be conservative with the version that installed.
+> Note: The software stack is very senstive to the versioning of the libraries. One should be conservative with the versions that are installed.
 
 Install [Ollama](https://ollama.com/download) for your platform like Windows or Linux. It's necessary to the embedding model:
 
