@@ -13,8 +13,18 @@ output_dir = data/out
 md_dir = data/md
 ```
 
-We will use  `granite3.1-dense:8b` (IBM) for the summarization because it's a good balance between performance and hardware requirements. 
+We will use  [`granite3.1-dense:8b` (IBM)](https://ollama.com/library/granite3.1-dense) for the summarization because it's a good balance between performance and hardware requirements. The model to be used is defined in the configuration file:
 
+```
+[MODEL]
+# Get the list available models with the command "ollama list"
+model = granite3.1-dense:8b
+```
+
+It should be noted that the model to be used can be defined in the configuration file, if no model is define, the script will try to use the `granite3.1-dense:8b` model. Therefore is a good idea to have it installed:
+
+```
+ollama pull granite3.1-dense
 ```
 
 ## Dependencies
