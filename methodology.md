@@ -1,4 +1,0 @@
-# Methodology
-
-## Overview
-
