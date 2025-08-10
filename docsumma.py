@@ -3,6 +3,7 @@ import tempfile
 import shutil
 from pathlib import Path
 from configparser import ConfigParser
+from csv import DictWriter
 
 # from IPython.display import Markdown, display
 
@@ -203,42 +204,41 @@ def main():
 
     files = os.listdir(input_dir)
 
-    for file in files:
-        doc_path = Path(input_dir).joinpath(file)  # Replace with your document path
+    csv_docsumma = Path(output_dir).joinpath("docsumma.csv")
+    csv_field_names = ['file_name', 'summary', 'model']
+    with open(csv_docsumma, "a", newline='', encoding="utf-8") as csvfile:
+        writer = DictWriter(csvfile, fieldnames=csv_field_names, dialect='unix')
+        writer.writeheader()
+        for file in files:
+            doc_path = Path(input_dir).joinpath(file)  # Replace with your document path
 
-        # Check format and process
-        doc_format = get_document_format(doc_path)
-        if doc_format:
-            try:
-                md_path = convert_document_to_markdown(doc_path, md_dir)
-            except ValueError as ve:
-                print("Document conversion failed. Enabling OCR.")
-                md_path = convert_document_to_markdown(doc_path, md_dir, do_ocr=True)
-            qa_chain = setup_qa_chain(Path(md_path), model_name=model_name)
+            # Check format and process
+            doc_format = get_document_format(doc_path)
+            if doc_format:
+                try:
+                    md_path = convert_document_to_markdown(doc_path, md_dir)
+                except ValueError as ve:
+                    print("Document conversion failed. Enabling OCR.")
+                    md_path = convert_document_to_markdown(doc_path, md_dir, do_ocr=True)
+                qa_chain = setup_qa_chain(Path(md_path), model_name=model_name)
 
-            if qa_chain == None:
-                print("Qa_chain is null")
-                continue
+                if qa_chain == None:
+                    print("Qa_chain is null")
+                    continue
 
-            # Example questions
-            # questions = [
-            #     "What is the main topic of this document?",
-            #     "What are the key points discussed?",
-            #     "Can you summarize the conclusions?",
-            # ]
+                question = "Can you summarize the document?"
 
-            questions = [
-                "Can you summarize the document?",
-            ]
-
-            answer_file = f"{Path(file).stem}_answer.txt"
-            doc_answer = Path(output_dir).joinpath(answer_file)
-            with open(doc_answer, "a") as ff:
-                for question in questions:
-                    result = ask_question(qa_chain, question)
-                    ff.write(question + "\n")
-                    ff.write(result["answer"])
-                    ff.write("\n\n")
+                # answer_file = f"{Path(file).stem}_answer.txt"
+                # doc_answer = Path(output_dir).joinpath(answer_file)
+                # with open(doc_answer, "a") as ff:
+                #     for question in questions:
+                #         result = ask_question(qa_chain, question)
+                #         ff.write(question + "\n")
+                #         ff.write(result["answer"])
+                #         ff.write("\n\n")
+                result = ask_question(qa_chain, question)
+                summary = result["answer"].strip().replace("\n", "").replace('"', "'")
+                writer.writerow({'file_name': file, 'summary': summary, 'model': model_name})
         else:
             print(f"Unsupported document format: {doc_path.suffix}")
 
