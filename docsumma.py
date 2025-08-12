@@ -205,10 +205,20 @@ def main():
     files = os.listdir(input_dir)
 
     csv_docsumma = Path(output_dir).joinpath("docsumma.csv")
+
+    # Flag if it's the first time we run the script,
+    # and we need to add the header to the CSV file.
+    if not csv_docsumma.is_file():
+        csv_exists = True
+
     csv_field_names = ['file_name', 'summary', 'model']
     with open(csv_docsumma, "a", newline='', encoding="utf-8") as csvfile:
         writer = DictWriter(csvfile, fieldnames=csv_field_names, dialect='unix')
-        writer.writeheader()
+        
+        # Don't add header to an existing CSV file.
+        if not csv_docsumma.is_file():
+            writer.writeheader()
+
         for file in files:
             doc_path = Path(input_dir).joinpath(file)  # Replace with your document path
 
