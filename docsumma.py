@@ -237,6 +237,9 @@ def main():
                 #         ff.write(result["answer"])
                 #         ff.write("\n\n")
                 result = ask_question(qa_chain, question)
+                # Transform the result into a string without line 
+                # breaks and double quotes so it will be easier to read
+                # in a file or Excel.
                 summary = result["answer"].strip().replace("\n", "").replace('"', "'")
                 writer.writerow({'file_name': file, 'summary': summary, 'model': model_name})
         else:
